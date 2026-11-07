@@ -10,6 +10,7 @@ import scheduleRoutes from './routes/schedules.js';
 import tripRoutes, { staffTripsRouter } from './routes/trips.js';
 import bookingRoutes from './routes/bookings.js';
 import ticketRoutes from './routes/tickets.js';
+import { tripTrackingRouter, pickupRouter, notificationRouter } from './routes/tracking.js';
 
 export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
   const app = express();
@@ -26,7 +27,10 @@ export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
   app.use('/api/v1/buses', busRouter);
   app.use('/api/v1/staff', staffTripsRouter);
   app.use('/api/v1/staff', staffRouter);
+  app.use('/api/v1/trips', tripTrackingRouter);
   app.use('/api/v1/trips', tripRoutes);
+  app.use('/api/v1/bookings', pickupRouter);
+  app.use('/api/v1/notifications', notificationRouter);
   app.use('/api/v1/bookings', bookingRoutes);
   app.use('/api/v1/tickets', ticketRoutes);
   app.use('/api/v1/routes', routeRoutes);

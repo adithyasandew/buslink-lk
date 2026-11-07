@@ -21,7 +21,7 @@ Shared models and schema changes are owned by `adithyasandew` (see TEAM_RESPONSI
 | `schedules` | busId, routeId, departureTime, arrivalTime, operatingDays[], active | index `(routeId, departureTime)` |
 | `trips` | scheduleId, busId, routeId, staffIds[], date, departureTime, status (`scheduled`\|`active`\|`completed`\|`cancelled`) | index `(routeId, date)`, `(busId, date)` |
 | `seatreservations` | tripId, seatNumber, bookingId | **unique `(tripId, seatNumber)`** — atomic overbooking guard (proposed) |
-| `bookings` | passengerId, tripId, pickupStopId, dropoffStopId, seats[], fare (server-computed), status (`pending`\|`confirmed`\|`cancelled`\|`rejected`) | index `(passengerId, createdAt)`, `tripId` |
+| `bookings` | passengerId, tripId, pickupStopId, dropoffStopId, seats[], fare (server-computed), pickupPoint, approachDistanceMeters, approachNotified, status (`pending`\|`confirmed`\|`cancelled`\|`rejected`) | index `(passengerId, createdAt)`, `tripId` |
 | `tickets` | bookingId, ticketRef, qrToken (opaque, no personal data), fare, status (`valid`\|`used`\|`cancelled`), verifiedBy, verifiedAt | unique `ticketRef`, unique `bookingId` |
 | `payments` | bookingId, amount, method, transactionId, status (`pending`\|`success`\|`failed`\|`refunded`), mock flag | unique `transactionId`; index `bookingId` |
 | `buslocations` | busId, tripId, lat, lng, accuracy, recordedAt | index `(tripId, recordedAt)`; TTL index to expire history (proposed) |

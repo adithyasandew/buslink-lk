@@ -11,6 +11,10 @@ const bookingSchema = new mongoose.Schema(
       validate: { validator: (v) => v.length > 0, message: 'At least one seat is required' },
     },
     fare: { type: Number, required: true, min: 0 }, // computed on the server only
+    // Optional exact pickup coordinates; defaults to the pickup stop's location.
+    pickupPoint: { lat: { type: Number, min: -90, max: 90 }, lng: { type: Number, min: -180, max: 180 } },
+    approachDistanceMeters: { type: Number, min: 100, max: 5000, default: 500 },
+    approachNotified: { type: Boolean, default: false },
     status: { type: String, enum: ['pending', 'confirmed', 'cancelled', 'rejected'], default: 'pending' },
   },
   { timestamps: true },
