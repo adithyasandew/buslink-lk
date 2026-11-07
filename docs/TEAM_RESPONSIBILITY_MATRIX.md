@@ -48,3 +48,11 @@ Owner recorded; work on these areas may start.
 ## 6. Implementation by the project manager (decision D-007, 2026-11-07)
 
 To keep delivery on schedule, the PM (`adithyasandew`) implements the modules of other members as well. Commits and PRs for that work are authored by `adithyasandew` and say so; module owners remain the accountable owners for explaining and demonstrating their module, and may take over, extend or review any of it. No work is attributed to a member who did not author it.
+
+## 7. Backend part assigned to Module 2 (decision D-008, 2026-11-07)
+
+`Mr-G01` (K.L.H.G. Karandana) also owns the backend integration of **booking and payment notifications (FR-17)**: creating in-app notifications when a booking is created, confirmed or cancelled and when a payment succeeds or fails, using the existing `notify()` service. His work is committed under his own identity after his review.
+
+## 8. Member commit procedure
+
+For work committed under another member's identity: the member has reviewed and approved the draft; `gh auth switch --user <member>` and `gh api user --jq .login` match; repository-local `user.name` and `user.email` are set to the member's identity and printed; the staged diff is shown; after the commit `git log -1` is checked; the identity is then reset to the PM's.
