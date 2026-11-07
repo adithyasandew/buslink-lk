@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
 import { errorHandler, notFound } from './middleware/errors.js';
+import { userAdminRouter, verifyRouter, complaintRouter, feedbackRouter } from './routes/admin.js';
 import authRoutes from './routes/auth.js';
 import { busRouter, staffRouter } from './routes/buses.js';
 import routeRoutes from './routes/routes.js';
@@ -39,6 +40,10 @@ export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
   app.use('/api/v1/tickets', ticketRoutes);
   app.use('/api/v1/routes', routeRoutes);
   app.use('/api/v1/schedules', scheduleRoutes);
+  app.use('/api/v1/users', userAdminRouter);
+  app.use('/api/v1/complaints', complaintRouter);
+  app.use('/api/v1/feedback', feedbackRouter);
+  app.use('/api/v1', verifyRouter); // per-route admin guard; mounted last so it never shadows other routers
 
   app.use(notFound);
   app.use(errorHandler);

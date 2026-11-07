@@ -42,6 +42,8 @@ The API refuses to start if MongoDB is unreachable, and builds all indexes (incl
 
 Tests: `npm test` in `server/` uses an in-memory MongoDB; `npm run test:mongo` runs the same suite against a real server (`TEST_MONGODB_URI`, default `mongodb://127.0.0.1:27017`, one throwaway database per test file). `npm test` in `client/` runs the UI tests.
 
+Create a real administrator with `ADMIN_EMAIL=... ADMIN_PASSWORD=... npm run seed:admin` (password at least 12 characters; admins cannot self-register).
+
 Demo accounts created by `seed:demo` use the password `Password123!` (override with `DEMO_PASSWORD`): `owner@example.lk`, `passenger@example.lk`, `admin@example.lk`, `driver@example.lk`, `conductor@example.lk`. Development only — the script refuses to run with `NODE_ENV=production`.
 
 ## Workflow

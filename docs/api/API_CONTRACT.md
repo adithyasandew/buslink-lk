@@ -7,15 +7,20 @@ Owner column: **PM** = `adithyasandew` (bus/schedule and booking/ticket backends
 ## Auth and users (FR-01, FR-14–16) — M5
 | Method | Path | Role | Purpose |
 |---|---|---|---|
-| POST | /auth/register | public | Register passenger or owner (staff are created by owners; admins seeded) |
-| POST | /auth/login | public | Returns JWT and user (rate limited) |
+| POST | /auth/register | public | Register passenger or owner (staff are created by owners; admins via `npm run seed:admin`) |
+| POST | /auth/login | public | Returns JWT and user (rate limited; same error for unknown email and wrong password) |
 | GET | /auth/me | any | Current user |
-| GET/PATCH | /users, /users/:id | admin | List, change status/role |
-| PATCH | /owners/:id/verify | admin | Verify bus owner |
-| PATCH | /buses/:id/verify | admin | Verify bus |
-| POST/GET | /complaints | passenger / admin | Submit, review complaints |
-| PATCH | /complaints/:id | admin | Update status |
-| POST | /feedback | passenger | Rating/feedback for a completed trip |
+| GET | /users?role=&status=&page=&limit= | admin | List users with `meta { page, limit, total }` (limit ≤ 100) |
+| GET | /users/:id | admin | User detail |
+| PATCH | /users/:id | admin | `{ status?: active\|suspended, role? }`; admins cannot change themselves (422 `CANNOT_MODIFY_SELF`); suspended users can no longer log in or use tokens |
+| PATCH | /owners/:id/verify | admin | `{ verified: boolean }`; owner is notified |
+| PATCH | /buses/:id/verify | admin | `{ verified: boolean }` → bus `verified` / back to `pending`; owner is notified. Owners cannot set a `pending` bus to `active` themselves (422 `BUS_NOT_VERIFIED`) |
+| GET | /admin/overview | admin | Users by role, buses by status, open complaints, booking count |
+| POST | /complaints | passenger | `{ details (10–2000 chars), tripId? }` (trip must exist) |
+| GET | /complaints?status= | passenger (own) / admin (all) | List complaints |
+| PATCH | /complaints/:id | admin | `{ status }`: `open → in_review \| rejected`, `in_review → resolved \| rejected` (422 `INVALID_STATUS_TRANSITION`); passenger is notified |
+| POST | /feedback | passenger | `{ tripId, rating 1–5, feedback? }` only for a completed trip with a confirmed booking; one per trip (409 `FEEDBACK_EXISTS`) |
+| GET | /feedback | admin | Ratings with `meta { count, average }` |
 
 ## Buses, staff, routes, stops, schedules (FR-02–05) — PM (UI: Module 1)
 | Method | Path | Role | Purpose |

@@ -56,6 +56,10 @@ busRouter.get('/:id', ownerOnly, validIdParams('id'), wrap(async (req, res) => o
 
 busRouter.patch('/:id', ownerOnly, validIdParams('id'), validate(busPatch), wrap(async (req, res) => {
   const bus = await ownBus(req);
+  // Only an administrator can move a bus out of "pending"; owners cannot self-activate.
+  if (req.body.status === 'active' && bus.status === 'pending') {
+    throw new AppError(422, 'BUS_NOT_VERIFIED', 'The bus must be verified by an administrator first');
+  }
   bus.set(req.body);
   try {
     await bus.save();
