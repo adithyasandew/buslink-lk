@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/* Central design tokens (semantic names; see master plan §43) */
+@theme {
+  --color-primary: #1d4ed8;
+  --color-primary-hover: #1e40af;
+  --color-surface: #ffffff;
+  --color-background: #f8fafc;
+  --color-text: #0f172a;
+  --color-muted: #475569;
+  --color-border: #cbd5e1;
+  --color-danger: #b91c1c;
+  --color-success: #15803d;
+  --color-focus: #f59e0b;
+}
+
+body { background: var(--color-background); color: var(--color-text); }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
