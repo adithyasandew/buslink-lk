@@ -68,6 +68,8 @@ Payment states: `pending → success | failed`, `success → refunded`. A pendin
 | POST | /bookings/:id/pickup-point | passenger (own) | Set pickup coordinates and approach distance |
 | GET | /notifications | any | Own notifications |
 | PATCH | /notifications/:id/read | any (own) | Mark read |
+
+Notification `type` values: `booking_created`, `booking_confirmed` (passenger, and the bus owner), `booking_cancelled`, `payment_success`, `payment_failed`, `payment_refunded`, `trip_status`, `bus_approaching`. Each is also pushed live as `notification:new` over Socket.IO. Booking/payment notifications (FR-17) are owned by `Mr-G01` (D-008).
 | GET | /health | public | Health check |
 
 ### Booking lifecycle (implemented)

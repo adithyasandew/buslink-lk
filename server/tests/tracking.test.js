@@ -40,7 +40,7 @@ describe('trip lifecycle', () => {
     const end = await request(app).post(`/api/v1/trips/${w.tripId}/end`).set(bearer(w.staff));
     expect(end.body.data.status).toBe('completed');
     const notes = await request(app).get('/api/v1/notifications').set(bearer(pax));
-    expect(notes.body.data.map((n) => n.type)).toEqual(['trip_status', 'trip_status']);
+    expect(notes.body.data.filter((n) => n.type === 'trip_status')).toHaveLength(2);
   });
 
   it('refuses unassigned staff, owners and passengers', async () => {
