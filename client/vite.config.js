@@ -4,6 +4,11 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: { proxy: { '/api': 'http://localhost:5000' } },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5000',
+      '/socket.io': { target: 'http://localhost:5000', ws: true },
+    },
+  },
   test: { environment: 'jsdom', setupFiles: './tests/setup.js', globals: true },
 })
