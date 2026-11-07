@@ -6,6 +6,7 @@ import { AuthProvider } from '../src/app/AuthContext'
 import AppRoutes from '../src/app/routes'
 import * as client from '../src/api/client'
 import * as owner from '../src/api/owner'
+import * as staffApi from '../src/api/staff'
 
 const renderAt = (path) =>
   render(
@@ -58,11 +59,12 @@ describe('routing and guards', () => {
 describe('login', () => {
   it('logs in and lands on the role dashboard', async () => {
     vi.spyOn(client, 'login').mockResolvedValue({ token: 'abc', user: { name: 'Sam', role: 'staff' } })
+    vi.spyOn(staffApi, 'listAssignedTrips').mockResolvedValue([])
     renderAt('/login')
     await userEvent.type(screen.getByLabelText('Email'), 's@x.lk')
     await userEvent.type(screen.getByLabelText('Password'), 'pw')
     await userEvent.click(screen.getByRole('button', { name: 'Log in' }))
-    expect(await screen.findByRole('heading', { name: 'Verify ticket' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Your trips' })).toBeInTheDocument()
     expect(localStorage.getItem('buslink.token')).toBe('abc')
   })
 

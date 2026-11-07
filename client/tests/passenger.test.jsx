@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
@@ -76,8 +76,9 @@ describe('trip page and seat map', () => {
     expect(within(summary).getByText('Rs. 840')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Book 2 seats' }))
     expect(passenger.createBooking).toHaveBeenCalledWith({ tripId: 't1', pickupStopId: 's1', dropoffStopId: 's3', seats: [3, 4] })
-    expect(await screen.findByRole('heading', { name: 'Colombo – Kandy' })).toBeInTheDocument()
+    // Wait for something only the booking page has; the trip page shares the route heading and may still be unmounting.
     expect(await screen.findByRole('region', { name: 'Payment' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Booking details' })).toBeInTheDocument()
   })
 
   it('blocks a drop-off before the pickup', async () => {
@@ -168,6 +169,8 @@ describe('live tracking', () => {
     vi.spyOn(passenger, 'getTripLocation').mockResolvedValue({ tripStatus: 'active', location: null })
     renderAs('passenger', '/passenger/bookings/b1/track')
     expect(await screen.findByText(/No location has been shared yet/)).toBeInTheDocument()
+    // The socket subscribes in an effect after render; wait for it before simulating events.
+    await waitFor(() => expect(socket.handlers['location:updated']).toBeTypeOf('function'))
     act(() => socket.handlers.connect())
     expect(socket.emit).toHaveBeenCalledWith('trip:join', { tripId: 't1' })
     act(() => socket.handlers['location:updated']({ tripId: 't1', lat: 7.25, lng: 80.35, recordedAt: new Date().toISOString() }))
@@ -217,7 +220,7 @@ describe('notifications', () => {
 describe('staff ticket verification', () => {
   it('shows a clear pass for a valid ticket', async () => {
     vi.spyOn(staff, 'verifyTicket').mockResolvedValue({ ticketRef: 'BL-ABCDEF1234', seats: [3, 4], status: 'used' })
-    renderAs('staff', '/staff')
+    renderAs('staff', '/staff/verify')
     await user.type(await screen.findByLabelText('Ticket code'), 'abc123token')
     await user.click(screen.getByRole('button', { name: 'Check ticket' }))
     expect(staff.verifyTicket).toHaveBeenCalledWith('abc123token')
@@ -227,7 +230,7 @@ describe('staff ticket verification', () => {
 
   it('explains a replayed ticket in plain words', async () => {
     vi.spyOn(staff, 'verifyTicket').mockRejectedValue({ code: 'TICKET_ALREADY_USED', message: 'used' })
-    renderAs('staff', '/staff')
+    renderAs('staff', '/staff/verify')
     await user.type(await screen.findByLabelText('Ticket code'), 'abc123token')
     await user.click(screen.getByRole('button', { name: 'Check ticket' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('Already used')
