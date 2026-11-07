@@ -1,10 +1,19 @@
 # Project Status
 
 - **Project start:** 2026-10-04 (repository created 2026-11-07)
-- **Phase:** 3 complete (skeleton and CI); Phase 4 (module work) next
-- **Completed:** repo and branches; team responsibility matrix; architecture overview; decision log (D-001–D-006 accepted); database design; REST API contract; error format; Socket.IO contract; PR/issue templates and CONTRIBUTING; references register; server skeleton (Express, health endpoint, error handler); client skeleton (Vite, React, Tailwind, Axios); GitHub Actions CI (client and server)
-- **Open:** auth/RBAC (Module 5) is the first feature and blocks other modules; then Module 1–4 work per the responsibility matrix; Docker Compose; require the CI checks in branch protection; REFERENCES.md still needs the proposal's cited sources transcribed
-- **Known defects:** none
-- **Tests:** server 2 and client 2 passing locally and in CI (health check only)
-- **Review policy:** all PRs are reviewed by the PM (`adithyasandew`); self-authored PRs are merged as admin after a review comment
-- **Next action:** `feature/member-5/auth-jwt-rbac` — register, login, `/auth/me`, JWT middleware and role guard (per API contract)
+- **Phase:** 4 in progress (module implementation). Per decision D-007 the PM (`adithyasandew`) implements remaining modules; commits state this truthfully.
+- **Completed:**
+  - Docs: responsibility matrix, architecture overview, decisions D-001–D-007, database design, REST/error/Socket.IO contracts, CONTRIBUTING and templates, references register
+  - Skeletons and CI: Express server, React/Vite/Tailwind client, GitHub Actions (client + server)
+  - Shared models (14 collections), distance/approach-threshold logic
+  - Client app shell: router, design tokens, auth context, role-protected routes, login page, dashboard placeholders
+  - Auth backend (FR-01, FR-16): register, login, `/auth/me`, JWT middleware, role guard
+  - Bus and staff API (FR-02, FR-03); route, stop and schedule API with trip generation (FR-04, FR-05)
+  - Trip search, booking with atomic seat reservation, QR ticket issue and verification (FR-06–08)
+- **Open (backend):** payments and revenue (Module 4, must call `confirmBooking`); trip start/end, location API, Socket.IO, approaching-bus notifications, notifications API (Module 3); admin, owner/bus verification, complaints, feedback (Module 5)
+- **Open (frontend):** Owner screens (Module 1); Passenger search/booking/ticket screens (Module 2); Staff trip and ticket-verify screens; Admin screens
+- **Open (project):** Docker Compose; Playwright end-to-end tests; require CI checks in branch protection; transcribe proposal references; seed/demo data; setup docs
+- **Known defects:** none known
+- **Tests:** server 51 and client 8 passing locally and in CI (server tests run against an in-memory MongoDB)
+- **Review policy:** PM reviews every PR; CI green before merge
+- **Next action:** payments and revenue API, then tracking/Socket.IO, then admin/complaints, then frontend screens
