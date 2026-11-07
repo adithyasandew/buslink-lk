@@ -8,8 +8,6 @@ function Placeholder({ title, module }) {
   )
 }
 
-export const PassengerDashboard = () => <Placeholder title="Passenger dashboard" module="Module 2" />
-export const StaffDashboard = () => <Placeholder title="Bus Staff dashboard" module="Modules 2 and 3" />
 export const AdminDashboard = () => <Placeholder title="Administrator dashboard" module="Module 5" />
 
 export function Forbidden() {

@@ -62,7 +62,7 @@ describe('login', () => {
     await userEvent.type(screen.getByLabelText('Email'), 's@x.lk')
     await userEvent.type(screen.getByLabelText('Password'), 'pw')
     await userEvent.click(screen.getByRole('button', { name: 'Log in' }))
-    expect(await screen.findByText('Bus Staff dashboard')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Verify ticket' })).toBeInTheDocument()
     expect(localStorage.getItem('buslink.token')).toBe('abc')
   })
 
