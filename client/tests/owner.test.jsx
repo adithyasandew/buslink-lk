@@ -172,6 +172,9 @@ describe('routes and stops', () => {
       { name: 'Colombo', lat: 6.93, lng: 79.86, fareFromStart: 0 },
       { name: 'Kandy', lat: 7.29, lng: 80.63, fareFromStart: 450 },
     ])
+    // Regression: the confirmation must survive the reload that follows a save.
+    expect(await screen.findByText('Stops saved')).toBeInTheDocument()
+    expect(within(screen.getByRole('listitem', { name: 'Stop 2' })).getByLabelText('Fare from start (Rs.)')).toHaveValue('450')
   })
 
   it('keeps at least two stops, supports reordering, and assigns another bus', async () => {
