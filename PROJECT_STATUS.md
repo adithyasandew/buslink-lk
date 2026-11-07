@@ -1,9 +1,10 @@
 # Project Status
 
-- **Phase:** 1 — repository bootstrap
-- **Completed:** repository created; `main` and `develop` branches; base README, `.gitignore`, `.editorconfig`
-- **Open:** team responsibility matrix, API/database contracts, collaborator invites, branch protection, skeleton (client/server), CI
+- **Project start:** 2026-10-04 (repository created 2026-11-07)
+- **Phase:** 2 complete (architecture and contracts); Phase 3 (skeleton) next
+- **Completed:** repo and branches; team responsibility matrix; architecture overview; decision log (D-001–D-006 accepted); database design; REST API contract; error format; Socket.IO contract; PR/issue templates and CONTRIBUTING; references register
+- **Open:** server skeleton; client skeleton; CI; auth/RBAC (Module 5); then module work per `docs/TEAM_RESPONSIBILITY_MATRIX.md`
 - **Known defects:** none
-- **Tests:** none yet (no code)
-- **Open decisions:** location source (staff device vs passenger phone); payment provider (mock first); backend owner for bus/route/schedule APIs; backend owner for booking/ticket APIs
-- **Next action:** agree open decisions, then Phase 2 (architecture and contracts)
+- **Tests:** none yet (docs only so far)
+- **Review policy:** all PRs reviewed by the PM (`adithyasandew`); self-authored PRs merged as admin after a review comment
+- **Next action:** `chore/member-3/server-skeleton`
