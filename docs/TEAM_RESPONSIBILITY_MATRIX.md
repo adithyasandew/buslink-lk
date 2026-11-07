@@ -28,8 +28,8 @@ Owner recorded; work on these areas may start.
 | FR | Primary |
 |---|---|
 | FR-01 Auth, FR-14 Complaints, FR-15 Admin, FR-16 RBAC | Module 5 (`Kavindu-Sathsara`) |
-| FR-02..05 Bus/staff/route/schedule | Module 1 UI + backend owner TBD |
-| FR-06..08 Search/booking/tickets | Module 2 UI + backend owner TBD |
+| FR-02..05 Bus/staff/route/schedule | Module 1 UI + backend `adithyasandew` |
+| FR-06..08 Search/booking/tickets | Module 2 UI + backend `adithyasandew` |
 | FR-09, FR-10 Payment, revenue | Module 4 (`randikaweerasinghe`) |
 | FR-11, FR-13 Tracking, approaching notification | Module 3 (`adithyasandew`) |
 | FR-12 Map tracking | Module 2 UI + Module 3 |
