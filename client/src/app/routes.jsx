@@ -5,7 +5,13 @@ import Layout from '../components/Layout'
 import ProtectedRoute from '../components/ProtectedRoute'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
-import { AdminDashboard, Forbidden, NotFoundPage } from '../pages/Placeholders'
+import { Forbidden, NotFoundPage } from '../pages/Placeholders'
+import AdminLayout from '../features/admin/AdminLayout'
+import AdminOverview from '../features/admin/Overview'
+import AdminBusesPage from '../features/admin/BusesPage'
+import AdminUsersPage from '../features/admin/UsersPage'
+import AdminComplaintsPage from '../features/admin/ComplaintsPage'
+import AdminRatingsPage from '../features/admin/RatingsPage'
 import PassengerLayout from '../features/passenger/PassengerLayout'
 import SearchPage from '../features/passenger/SearchPage'
 import TripPage from '../features/passenger/TripPage'
@@ -61,7 +67,13 @@ export default function AppRoutes() {
           </Route>
         </Route>
         <Route element={<ProtectedRoute roles={['admin']} />}>
-          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="admin" element={<AdminLayout />}>
+            <Route index element={<AdminOverview />} />
+            <Route path="buses" element={<AdminBusesPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="complaints" element={<AdminComplaintsPage />} />
+            <Route path="ratings" element={<AdminRatingsPage />} />
+          </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
