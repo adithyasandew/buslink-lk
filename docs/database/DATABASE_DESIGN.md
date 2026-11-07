@@ -1,6 +1,6 @@
 # Database Design (preliminary)
 
-Project start: 2026-10-04. Based on proposal Section 11 and master plan §16. MongoDB via Mongoose. Items marked **(proposed)** need PM approval and are recorded in `docs/architecture/DECISIONS.md` once accepted.
+Project start: 2026-10-04. Based on proposal Section 11 and master plan §16. MongoDB via Mongoose. Proposed items were approved by the PM on 2026-11-07 (decision D-006 in `docs/architecture/DECISIONS.md`).
 Shared models and schema changes are owned by `adithyasandew` (see TEAM_RESPONSIBILITY_MATRIX.md).
 
 ## Conventions
