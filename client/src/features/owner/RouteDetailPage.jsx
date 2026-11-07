@@ -30,8 +30,9 @@ export default function RouteDetailPage() {
     try { await deleteRoute(id); navigate('/owner/routes') } catch (err) { setMsg({ tone: 'danger', text: err.message }) }
   }
 
-  if (loading) return <Loading />
-  if (error) return <ErrorState error={error} onRetry={reload} />
+  // Only block the page on the first load; a refresh after saving must not unmount the editors.
+  if (loading && !data) return <Loading />
+  if (error && !data) return <ErrorState error={error} onRetry={reload} />
   const { route, buses } = data
   const assigned = buses.filter((b) => route.assignedBusIds.includes(b._id))
   const available = buses.filter((b) => !route.assignedBusIds.includes(b._id) && b.status !== 'inactive')

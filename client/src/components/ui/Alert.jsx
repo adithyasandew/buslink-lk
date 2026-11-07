@@ -7,7 +7,7 @@ const TONES = {
 
 export default function Alert({ tone = 'info', children, ...props }) {
   return (
-    <div role={tone === 'danger' ? 'alert' : 'status'} className={`rounded-lg border px-4 py-3 text-sm ${TONES[tone]}`} {...props}>
+    <div role={tone === 'danger' ? 'alert' : 'status'} className={`rounded-xl border px-4 py-3 text-sm ${TONES[tone]}`} {...props}>
       {children}
     </div>
   )

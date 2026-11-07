@@ -5,9 +5,9 @@
 export default function DataList({ items, columns, rowKey = (i) => i._id ?? i.id, actions }) {
   return (
     <>
-      <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+      <div className="hidden overflow-x-auto rounded-2xl border border-border bg-surface shadow-card md:block">
         <table className="w-full text-left text-sm">
-          <thead className="bg-background text-muted">
+          <thead className="bg-background text-xs uppercase tracking-wide text-muted">
             <tr>
               {columns.map((c) => <th key={c.key} scope="col" className="px-4 py-3 font-medium">{c.label}</th>)}
               {actions && <th scope="col" className="px-4 py-3 text-right font-medium">Actions</th>}
@@ -26,7 +26,7 @@ export default function DataList({ items, columns, rowKey = (i) => i._id ?? i.id
 
       <ul className="space-y-3 md:hidden">
         {items.map((item) => (
-          <li key={rowKey(item)} className="rounded-xl border border-border bg-surface p-4">
+          <li key={rowKey(item)} className="rounded-2xl border border-border bg-surface p-4 shadow-card">
             <dl className="space-y-2">
               {columns.map((c) => (
                 <div key={c.key} className="flex items-start justify-between gap-4">
