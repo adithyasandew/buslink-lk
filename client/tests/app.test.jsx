@@ -5,6 +5,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { AuthProvider } from '../src/app/AuthContext'
 import AppRoutes from '../src/app/routes'
 import * as client from '../src/api/client'
+import * as owner from '../src/api/owner'
 
 const renderAt = (path) =>
   render(
@@ -47,9 +48,10 @@ describe('routing and guards', () => {
 
   it('lets the right role in', async () => {
     localStorage.setItem('buslink.token', 't')
-    vi.spyOn(client, 'getMe').mockResolvedValue({ name: 'Olu', role: 'owner' })
+    vi.spyOn(client, 'getMe').mockResolvedValue({ name: 'Olu', role: 'owner', ownerVerified: true })
+    for (const fn of ['listBuses', 'listStaff', 'listRoutes', 'listSchedules']) vi.spyOn(owner, fn).mockResolvedValue([])
     renderAt('/owner')
-    expect(await screen.findByText('Bus Owner dashboard')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Welcome, Olu' })).toBeInTheDocument()
   })
 })
 
