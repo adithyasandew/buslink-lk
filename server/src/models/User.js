@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, trim: true },
     status: { type: String, enum: ['active', 'suspended', 'pending'], default: 'active' },
     ownerVerified: { type: Boolean, default: false },
+    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true }, // set on staff: the owner who created them
   },
   { timestamps: true },
 );

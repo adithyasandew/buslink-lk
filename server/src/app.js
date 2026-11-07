@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import mongoose from 'mongoose';
 import { errorHandler, notFound } from './middleware/errors.js';
 import authRoutes from './routes/auth.js';
+import { busRouter, staffRouter } from './routes/buses.js';
 
 export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
   const app = express();
@@ -17,6 +18,8 @@ export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
   });
 
   app.use('/api/v1/auth', authRoutes);
+  app.use('/api/v1/buses', busRouter);
+  app.use('/api/v1/staff', staffRouter);
 
   app.use(notFound);
   app.use(errorHandler);
