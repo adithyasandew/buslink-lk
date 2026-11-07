@@ -25,5 +25,5 @@ export async function buildWorld(app, { date = '2026-11-09' } = {}) {
   await request(app).post(`/api/v1/schedules/${schedule._id}/trips`).set(bearer(owner)).send({ from: date, to: date });
   const staff = (await request(app).post('/api/v1/auth/login').send({ email: staffCreds.email, password: staffCreds.password })).body.data;
   const found = await request(app).get('/api/v1/trips/search').query({ from: 'Colombo', to: 'Kandy', date });
-  return { owner, bus, route, stops: stopList, staff, tripId: found.body.data[0]?.tripId, pickup: stopList[0], dropoff: stopList[2], mid: stopList[1] };
+  return { owner, bus, route, stops: stopList, staff, tripId: found.body.data.find((r) => r.pickupStopId === stopList[0]._id)?.tripId, pickup: stopList[0], dropoff: stopList[2], mid: stopList[1] };
 }
