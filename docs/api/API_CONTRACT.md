@@ -15,6 +15,7 @@ Owner column: **PM** = `adithyasandew` (bus/schedule and booking/ticket backends
 | PATCH | /users/:id | admin | `{ status?: active\|suspended, role? }`; admins cannot change themselves (422 `CANNOT_MODIFY_SELF`); suspended users can no longer log in or use tokens |
 | PATCH | /owners/:id/verify | admin | `{ verified: boolean }`; owner is notified |
 | PATCH | /buses/:id/verify | admin | `{ verified: boolean }` → bus `verified` / back to `pending`; owner is notified. Owners cannot set a `pending` bus to `active` themselves (422 `BUS_NOT_VERIFIED`) |
+| GET | /admin/buses?status=&page=&limit= | admin | All buses with their owner (`{ name, email, verified }`) and `meta` — the verification queue |
 | GET | /admin/overview | admin | Users by role, buses by status, open complaints, booking count |
 | POST | /complaints | passenger | `{ details (10–2000 chars), tripId? }` (trip must exist) |
 | GET | /complaints?status= | passenger (own) / admin (all) | List complaints |

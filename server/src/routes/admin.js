@@ -79,6 +79,26 @@ verifyRouter.patch('/buses/:id/verify', ...adminOnly, validIdParams('id'), valid
   ok(res, bus, 'Bus updated');
 }));
 
+const busListQuery = z.object({
+  status: z.enum(['pending', 'verified', 'active', 'inactive']).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+
+verifyRouter.get('/admin/buses', ...adminOnly, validate(busListQuery, 'query'), wrap(async (req, res) => {
+  const { status, page, limit } = req.query;
+  const filter = status ? { status } : {};
+  const [buses, total] = await Promise.all([
+    Bus.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).populate('ownerId', 'name email ownerVerified'),
+    Bus.countDocuments(filter),
+  ]);
+  const data = buses.map((b) => ({
+    _id: b.id, registrationNumber: b.registrationNumber, model: b.model, capacity: b.capacity, status: b.status, createdAt: b.createdAt,
+    owner: b.ownerId && { id: b.ownerId.id, name: b.ownerId.name, email: b.ownerId.email, verified: b.ownerId.ownerVerified },
+  }));
+  res.json({ success: true, data, message: 'Buses', meta: { page, limit, total } });
+}));
+
 verifyRouter.get('/admin/overview', ...adminOnly, wrap(async (_req, res) => {
   const [users, buses, openComplaints, bookings] = await Promise.all([
     User.aggregate([{ $group: { _id: '$role', count: { $sum: 1 } } }]),

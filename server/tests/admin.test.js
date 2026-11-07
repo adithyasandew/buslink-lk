@@ -168,3 +168,21 @@ describe('ratings overview and routing safety', () => {
     expect((await request(app).get('/api/v1/admin/overview')).status).toBe(401);
   });
 });
+
+describe('admin bus list', () => {
+  it('lists all buses with their owner, filters by status, and is admin-only', async () => {
+    const admin = await makeAdmin(app);
+    const w = await buildWorld(app);
+    await buildWorld(app);
+    const all = await get(admin, '/admin/buses');
+    expect(all.status).toBe(200);
+    expect(all.body.meta.total).toBe(2);
+    expect(all.body.data[0].owner).toMatchObject({ name: expect.any(String), email: expect.any(String), verified: false });
+    expect(JSON.stringify(all.body)).not.toMatch(/passwordHash/);
+    await patch(admin, `/buses/${w.bus._id}/verify`, { verified: true });
+    expect((await get(admin, '/admin/buses?status=pending')).body.data).toHaveLength(1);
+    expect((await get(admin, '/admin/buses?status=verified')).body.data[0]._id).toBe(w.bus._id);
+    expect((await get(w.owner, '/admin/buses')).status).toBe(403);
+    expect((await get(admin, '/admin/buses?status=bogus')).status).toBe(400);
+  });
+});

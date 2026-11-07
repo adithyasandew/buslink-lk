@@ -14,4 +14,6 @@ export const STATUS_TONE = {
   success: 'success', failed: 'danger', refunded: 'info',
   valid: 'success', used: 'neutral',
   scheduled: 'info', active: 'success', completed: 'neutral',
+  verified: 'info', inactive: 'neutral', suspended: 'danger',
+  open: 'warning', in_review: 'info', resolved: 'success',
 }
