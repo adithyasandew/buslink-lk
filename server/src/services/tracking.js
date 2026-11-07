@@ -1,4 +1,6 @@
 import Booking from '../models/Booking.js';
+import BusLocation from '../models/BusLocation.js';
+import { AppError } from '../middleware/errors.js';
 import Stop from '../models/Stop.js';
 import { distanceMeters, isApproaching } from './geo.js';
 import { notify, events } from './notifications.js';
@@ -35,4 +37,13 @@ export async function notifyTripStatus(trip, status) {
   const label = status === 'active' ? 'has started' : 'has completed';
   await Promise.all(bookings.map((b) => notify(b.passengerId, 'trip_status', `Your trip ${label}.`, trip.id)));
   events.emit('trip:status', { tripId: String(trip.id), status, at: new Date().toISOString() });
+}
+
+/** Persist a location for an active trip, publish it, and run the approaching check. Used by REST and Socket.IO. */
+export async function recordLocation(trip, { lat, lng, accuracy }) {
+  if (trip.status !== 'active') throw new AppError(422, 'TRIP_NOT_ACTIVE', 'Location can only be shared during an active trip');
+  const loc = await BusLocation.create({ busId: trip.busId, tripId: trip.id, lat, lng, accuracy, recordedAt: new Date() });
+  events.emit('location', { tripId: String(trip.id), lat: loc.lat, lng: loc.lng, accuracy: loc.accuracy, recordedAt: loc.recordedAt.toISOString() });
+  const notified = await checkApproaching(trip, loc);
+  return { loc, notified };
 }

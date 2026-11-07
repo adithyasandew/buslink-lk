@@ -9,8 +9,7 @@ import { AppError } from '../middleware/errors.js';
 import { validate } from '../middleware/validate.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 import { validIdParams } from '../middleware/ids.js';
-import { checkApproaching, notifyTripStatus, STALE_AFTER_MS } from '../services/tracking.js';
-import { events } from '../services/notifications.js';
+import { notifyTripStatus, recordLocation, STALE_AFTER_MS } from '../services/tracking.js';
 import { isStale } from '../services/geo.js';
 
 const locationBody = z.object({
@@ -60,10 +59,7 @@ tripTrackingRouter.post('/:id/end', authenticate, requireRole('staff'), validIdP
 
 tripTrackingRouter.post('/:id/location', authenticate, requireRole('staff'), validIdParams('id'), validate(locationBody), wrap(async (req, res) => {
   const trip = await assignedTrip(req);
-  if (trip.status !== 'active') throw new AppError(422, 'TRIP_NOT_ACTIVE', 'Location can only be shared during an active trip');
-  const loc = await BusLocation.create({ busId: trip.busId, tripId: trip.id, ...req.body, recordedAt: new Date() });
-  events.emit('location', { tripId: String(trip.id), lat: loc.lat, lng: loc.lng, accuracy: loc.accuracy, recordedAt: loc.recordedAt.toISOString() });
-  const notified = await checkApproaching(trip, loc);
+  const { loc, notified } = await recordLocation(trip, req.body);
   ok(res, { recordedAt: loc.recordedAt, notified: notified.length }, 'Location recorded', 201);
 }));
 
