@@ -11,6 +11,7 @@ import { validate } from '../middleware/validate.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 import { validIdParams } from '../middleware/ids.js';
 import { createBookingWithSeats, cancelBooking } from '../services/bookings.js';
+import { refundForBooking } from '../services/payments.js';
 
 const bookingBody = z.object({
   tripId: z.string(),
@@ -70,7 +71,12 @@ router.post('/:id/cancel', requireRole('passenger'), validIdParams('id'), wrap(a
   const booking = await Booking.findById(req.params.id);
   if (!booking || String(booking.passengerId) !== String(req.user.id)) throw notFound();
   if (!['pending', 'confirmed'].includes(booking.status)) throw new AppError(409, 'BOOKING_NOT_CANCELLABLE', 'Booking cannot be cancelled');
-  ok(res, await cancelBooking(booking), 'Booking cancelled');
+  if (await Ticket.exists({ bookingId: booking.id, status: 'used' })) {
+    throw new AppError(409, 'BOOKING_ALREADY_TRAVELLED', 'This ticket has already been used and cannot be cancelled');
+  }
+  const cancelled = await cancelBooking(booking);
+  const refund = await refundForBooking(booking.id);
+  ok(res, { ...cancelled.toObject(), refund: refund ? { paymentId: refund.id, amount: refund.amount, status: refund.status } : null }, 'Booking cancelled');
 }));
 
 export default router;

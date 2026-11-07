@@ -49,10 +49,15 @@ Owner column: **PM** = `adithyasandew` (bus/schedule and booking/ticket backends
 ## Payments and revenue (FR-09, FR-10) — M4
 | Method | Path | Role | Purpose |
 |---|---|---|---|
-| POST | /payments | passenger | Start (mock) payment for a booking |
+| POST | /payments | passenger (own booking) | Start a mock payment `{ bookingId, method: mock_card\|mock_wallet, simulate?: success\|fail\|pending }`. Amount is the server fare; any extra field (amount, card data) is rejected. One open payment per booking (409 `PAYMENT_EXISTS`); trip must still be `scheduled` (422 `TRIP_NOT_PAYABLE`) |
+| GET | /payments | passenger | Own payment history |
 | GET | /payments/:id | passenger (own) / owner | Payment status |
-| GET | /owner/payments | owner | Own bus payments |
-| GET | /owner/revenue?from=&to=&busId= | owner | Collections and revenue summary |
+| POST | /payments/mock-gateway/callback | gateway (header `x-mock-gateway-secret`) | Sandbox stand-in for a provider webhook: `{ transactionId, status: success\|failed }` settles a pending payment. Idempotent for retries; 404 when `MOCK_GATEWAY_SECRET` is not configured |
+| GET | /owner/payments | owner | Payments on own buses |
+| GET | /owner/revenue?from=&to=&busId= | owner | `{ total, count, refunded: { total, count }, byDay[], byBus[] }` (successful payments only) |
+| GET | /owner/trips/:id/collections | owner (own trip) | `{ seatsSold, confirmedBookings, collected, pending, refunded, bus }` |
+
+Payment states: `pending → success | failed`, `success → refunded`. A pending payment not settled within 15 minutes is treated as abandoned (`failed`) when the passenger tries again. Cancelling a booking abandons a pending payment and fully refunds a successful one (mock policy, D-009); a booking whose ticket was used cannot be cancelled (409 `BOOKING_ALREADY_TRAVELLED`). `POST /bookings/:id/cancel` returns `refund: { paymentId, amount, status } | null`.
 
 ## Tracking and notifications (FR-11–13, FR-17) — M3
 | Method | Path | Role | Purpose |

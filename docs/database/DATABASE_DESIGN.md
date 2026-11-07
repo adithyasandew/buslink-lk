@@ -23,7 +23,7 @@ Shared models and schema changes are owned by `adithyasandew` (see TEAM_RESPONSI
 | `seatreservations` | tripId, seatNumber, bookingId | **unique `(tripId, seatNumber)`** — atomic overbooking guard (proposed) |
 | `bookings` | passengerId, tripId, pickupStopId, dropoffStopId, seats[], fare (server-computed), pickupPoint, approachDistanceMeters, approachNotified, status (`pending`\|`confirmed`\|`cancelled`\|`rejected`) | index `(passengerId, createdAt)`, `tripId` |
 | `tickets` | bookingId, ticketRef, qrToken (opaque, no personal data), fare, status (`valid`\|`used`\|`cancelled`), verifiedBy, verifiedAt | unique `ticketRef`, unique `bookingId` |
-| `payments` | bookingId, amount, method, transactionId, status (`pending`\|`success`\|`failed`\|`refunded`), mock flag | unique `transactionId`; index `bookingId` |
+| `payments` | bookingId, amount, method, transactionId, status (`pending`\|`success`\|`failed`\|`refunded`), open, refundedAt, mock flag | unique `transactionId`; index `bookingId`; partial unique `bookingId` where `open: true` (one pending/successful payment per booking) |
 | `buslocations` | busId, tripId, lat, lng, accuracy, recordedAt | index `(tripId, recordedAt)`; TTL index to expire history (proposed) |
 | `notifications` | userId, type, message, status (`unread`\|`read`), relatedId | index `(userId, createdAt)` |
 | `feedbackcomplaints` | passengerId, tripId, kind (`rating`\|`complaint`), rating, feedback, details, status (`open`\|`in_review`\|`resolved`\|`rejected`) | index `status` |

@@ -9,6 +9,7 @@
 | D-006 | 2026-11-07 | Schema choices in DATABASE_DESIGN.md accepted: unique bus registration number, `seatreservations` unique `(tripId, seatNumber)` overbooking guard, `buslocations` TTL history, server-computed fares, in-app notifications first. | Accepted (PM) |
 | D-007 | 2026-11-07 | PM implements remaining modules (auth, buses/routes/schedules, bookings/tickets, payments, tracking, frontends) under `adithyasandew`; authorship stays truthful and module owners remain accountable for demonstrating their module. | Accepted (PM) |
 | D-008 | 2026-11-07 | Booking/payment notification integration (FR-17) is assigned to `Mr-G01`; member-commit procedure recorded in the matrix. | Accepted (PM) |
+| D-009 | 2026-11-08 | Mock payment lifecycle: pending payments settle via a secret-protected mock gateway callback and expire after 15 minutes; cancelling before travel fully refunds a successful payment; no cancellation after the ticket is used. Real provider refund rules remain to be agreed before any real gateway. | Accepted for mock/sandbox |
 | D-005 | — | Bus Staff is a single role (drivers and conductors combined). | Accepted (per master plan) |
 
 Previously open questions (now answered in DATABASE_DESIGN.md): staff as user role vs profile, embedded vs separate stops, multi-seat bookings, schedule-to-trip generation, location history retention, notification channels, complaint lifecycle, owner/bus verification.
