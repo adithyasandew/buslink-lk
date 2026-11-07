@@ -103,7 +103,7 @@ notificationRouter.get('/', wrap(async (req, res) => {
   ok(res, await Notification.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(100), 'Notifications');
 }));
 notificationRouter.patch('/:id/read', validIdParams('id'), wrap(async (req, res) => {
-  const n = await Notification.findOneAndUpdate({ _id: req.params.id, userId: req.user.id }, { status: 'read' }, { new: true });
+  const n = await Notification.findOneAndUpdate({ _id: req.params.id, userId: req.user.id }, { status: 'read' }, { returnDocument: 'after' });
   if (!n) throw notFound('Notification not found');
   ok(res, n, 'Marked as read');
 }));

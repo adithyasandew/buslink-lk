@@ -33,7 +33,7 @@ router.post('/verify', requireRole('staff'), verifyLimiter, validate(z.object({ 
   if (ticket.status === 'cancelled' || booking.status !== 'confirmed') throw new AppError(422, 'TICKET_NOT_VALID', 'Ticket is not valid');
   // Atomic valid -> used so concurrent scans cannot both succeed.
   const used = await Ticket.findOneAndUpdate(
-    { _id: ticket.id, status: 'valid' }, { status: 'used', verifiedBy: req.user.id, verifiedAt: new Date() }, { new: true },
+    { _id: ticket.id, status: 'valid' }, { status: 'used', verifiedBy: req.user.id, verifiedAt: new Date() }, { returnDocument: 'after' },
   );
   if (!used) throw new AppError(409, 'TICKET_ALREADY_USED', 'Ticket has already been used');
   ok(res, { ticketRef: used.ticketRef, seats: booking.seats, status: used.status }, 'Ticket verified');

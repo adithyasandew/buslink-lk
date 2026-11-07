@@ -7,7 +7,9 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "lint": "eslint src tests",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:mongo": "TEST_MONGODB_URI=${TEST_MONGODB_URI:-mongodb://127.0.0.1:27017} vitest run",
+    "seed:demo": "node src/scripts/seedDemo.js"
   },
   "engines": {
     "node": ">=20"
