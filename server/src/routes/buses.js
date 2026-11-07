@@ -80,7 +80,7 @@ busRouter.post('/:id/staff', ownerOnly, validIdParams('id'), validate(assignBody
   const a = await BusStaffAssignment.findOneAndUpdate(
     { staffUserId: staff.id, busId: bus.id },
     { staffType: req.body.staffType, status: 'active' },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
   );
   ok(res, a, 'Staff assigned', 201);
 }));
@@ -88,7 +88,7 @@ busRouter.post('/:id/staff', ownerOnly, validIdParams('id'), validate(assignBody
 busRouter.delete('/:id/staff/:staffUserId', ownerOnly, validIdParams('id', 'staffUserId'), wrap(async (req, res) => {
   const bus = await ownBus(req);
   const a = await BusStaffAssignment.findOneAndUpdate(
-    { busId: bus.id, staffUserId: req.params.staffUserId }, { status: 'inactive' }, { new: true },
+    { busId: bus.id, staffUserId: req.params.staffUserId }, { status: 'inactive' }, { returnDocument: 'after' },
   );
   if (!a) throw new AppError(404, 'NOT_FOUND', 'Assignment not found');
   ok(res, a, 'Staff unassigned');

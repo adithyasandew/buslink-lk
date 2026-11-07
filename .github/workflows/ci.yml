@@ -23,6 +23,31 @@ jobs:
       - run: npm run lint
       - run: npm test
 
+  server-mongodb:
+    # Same suite against a real MongoDB server (what the app uses), not only the in-memory one.
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:latest
+        ports: ['27017:27017']
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - run: npm run test:mongo
+        env:
+          TEST_MONGODB_URI: mongodb://127.0.0.1:27017
+
   client:
     runs-on: ubuntu-latest
     defaults:
