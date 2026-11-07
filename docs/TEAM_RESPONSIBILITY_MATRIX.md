@@ -44,3 +44,7 @@ Owner recorded; work on these areas may start.
 
 - One accountable owner per task; commits are authored by the member who did the work, under their own identity.
 - Task branches from `develop`, PR to `develop`, review and approval by the PM (`adithyasandew`), CI must pass once configured.
+
+## 6. Implementation by the project manager (decision D-007, 2026-11-07)
+
+To keep delivery on schedule, the PM (`adithyasandew`) implements the modules of other members as well. Commits and PRs for that work are authored by `adithyasandew` and say so; module owners remain the accountable owners for explaining and demonstrating their module, and may take over, extend or review any of it. No work is attributed to a member who did not author it.
