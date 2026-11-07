@@ -2,6 +2,10 @@ import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../app/AuthContext'
 import { homeFor } from '../app/roles'
+import Button from '../components/ui/Button'
+import Card from '../components/ui/Card'
+import { TextField } from '../components/ui/Field'
+import Icon from '../components/ui/Icon'
 
 export default function Login() {
   const { user, login } = useAuth()
@@ -26,27 +30,21 @@ export default function Login() {
     }
   }
 
-  const field = 'mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3'
-
   return (
-    <section className="mx-auto max-w-sm">
-      <h1 className="text-2xl font-bold">Log in</h1>
-      <form onSubmit={onSubmit} className="mt-4 space-y-4" noValidate>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" autoComplete="email" required className={field}
-            value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input id="password" type="password" autoComplete="current-password" required className={field}
-            value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-        </div>
-        {error && <p role="alert" className="text-danger">{error}</p>}
-        <button type="submit" disabled={busy} className="min-h-11 w-full rounded bg-primary px-4 text-white hover:bg-primary-hover disabled:opacity-60">
-          {busy ? 'Logging in…' : 'Log in'}
-        </button>
-      </form>
+    <section className="mx-auto max-w-md pt-4 sm:pt-12">
+      <div className="mb-6 flex flex-col items-center text-center">
+        <span className="grid size-12 place-items-center rounded-2xl bg-primary text-white"><Icon name="bus" className="size-6" /></span>
+        <h1 className="mt-4">Log in</h1>
+        <p className="mt-1 text-muted">Welcome back to BusLink LK.</p>
+      </div>
+      <Card as="div">
+        <form onSubmit={onSubmit} className="space-y-4" noValidate>
+          <TextField label="Email" type="email" autoComplete="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <TextField label="Password" type="password" autoComplete="current-password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          {error && <p role="alert" className="text-sm text-danger">{error}</p>}
+          <Button type="submit" disabled={busy} className="w-full">{busy ? 'Logging in…' : 'Log in'}</Button>
+        </form>
+      </Card>
     </section>
   )
 }

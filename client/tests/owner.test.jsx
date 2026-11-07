@@ -234,3 +234,44 @@ describe('schedules page', () => {
     expect(await screen.findByText(/Created 2 trip\(s\)/)).toBeInTheDocument()
   })
 })
+
+describe('modern shell: navigation and setup checklist', () => {
+  it('provides a sidebar and a mobile bottom nav with the same destinations', async () => {
+    renderOwner('/owner')
+    await screen.findByRole('heading', { name: 'Welcome, Olu' })
+    const side = screen.getByRole('navigation', { name: 'Bus owner' })
+    const bottom = screen.getByRole('navigation', { name: 'Bus owner quick navigation' })
+    const hrefs = (nav) => within(nav).getAllByRole('link').map((l) => l.getAttribute('href'))
+    expect(hrefs(bottom)).toEqual(hrefs(side))
+    expect(within(bottom).getByRole('link', { name: 'Overview' })).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('shows setup progress and marks completed steps', async () => {
+    owner.listBuses.mockResolvedValue([bus])
+    owner.listRoutes.mockResolvedValue([route])
+    renderOwner('/owner')
+    const bar = await screen.findByRole('progressbar', { name: 'Setup progress' })
+    expect(bar).toHaveAttribute('aria-valuenow', '2')
+    expect(bar).toHaveAttribute('aria-valuemax', '4')
+    expect(screen.getByText('2 of 4 done')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Register a bus.*\(done\)/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Add a driver or conductor.*\(to do\)/ })).toBeInTheDocument()
+  })
+
+  it('hides the checklist once setup is complete', async () => {
+    owner.listBuses.mockResolvedValue([bus])
+    owner.listRoutes.mockResolvedValue([route])
+    owner.listStaff.mockResolvedValue([{ id: 's1', name: 'K' }])
+    owner.listSchedules.mockResolvedValue([{ _id: 'sc', busId: 'b1', routeId: 'r1', operatingDays: [1], active: true }])
+    renderOwner('/owner')
+    await screen.findByRole('heading', { name: 'Welcome, Olu' })
+    await screen.findByRole('link', { name: /1.*Buses/ }) // stats tiles rendered
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+  })
+
+  it('announces loading to assistive tech with a skeleton', async () => {
+    owner.listBuses.mockReturnValue(new Promise(() => {}))
+    renderOwner('/owner/buses')
+    expect(await screen.findByRole('status')).toHaveTextContent('Loading…')
+  })
+})

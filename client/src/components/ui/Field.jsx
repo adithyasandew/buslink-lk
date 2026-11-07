@@ -1,7 +1,7 @@
 import { useId } from 'react'
 
 const control =
-  'block min-h-11 w-full rounded-lg border bg-surface px-3 text-base text-text placeholder:text-muted'
+  'block min-h-11 w-full rounded-xl border bg-surface px-3 text-base text-text shadow-sm placeholder:text-muted focus:border-primary'
 
 function Wrapper({ label, error, hint, id, children }) {
   return (
@@ -22,7 +22,7 @@ export function TextField({ label, error, hint, ...props }) {
     <Wrapper label={label} error={error} hint={hint} id={id}>
       <input
         id={id}
-        className={`${control} ${error ? 'border-danger' : 'border-border'}`}
+        className={`${control} ${error ? 'border-danger' : 'border-border-strong'}`}
         aria-invalid={Boolean(error)}
         aria-describedby={describe(id, error, hint)}
         {...props}
@@ -37,7 +37,7 @@ export function SelectField({ label, error, hint, children, ...props }) {
     <Wrapper label={label} error={error} hint={hint} id={id}>
       <select
         id={id}
-        className={`${control} ${error ? 'border-danger' : 'border-border'}`}
+        className={`${control} ${error ? 'border-danger' : 'border-border-strong'}`}
         aria-invalid={Boolean(error)}
         aria-describedby={describe(id, error, hint)}
         {...props}
