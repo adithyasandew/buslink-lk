@@ -4,16 +4,29 @@
 @theme {
   --color-primary: #1d4ed8;
   --color-primary-hover: #1e40af;
+  --color-primary-soft: #dbeafe;
   --color-surface: #ffffff;
-  --color-background: #f8fafc;
+  --color-background: #f1f5f9;
   --color-text: #0f172a;
   --color-muted: #475569;
   --color-border: #cbd5e1;
   --color-danger: #b91c1c;
+  --color-danger-soft: #fee2e2;
   --color-success: #15803d;
+  --color-success-soft: #dcfce7;
+  --color-warning: #92400e;
+  --color-warning-soft: #fef3c7;
   --color-focus: #f59e0b;
 }
 
-body { background: var(--color-background); color: var(--color-text); }
+/* Fluid type scale (mobile-first, clamp between min and max) */
+:root {
+  --text-h1: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
+  --text-h2: clamp(1.125rem, 1rem + 0.625vw, 1.375rem);
+}
+
+body { background: var(--color-background); color: var(--color-text); min-height: 100dvh; }
+h1 { font-size: var(--text-h1); font-weight: 700; line-height: 1.2; }
+h2 { font-size: var(--text-h2); font-weight: 600; line-height: 1.3; }
 :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
