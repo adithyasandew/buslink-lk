@@ -19,6 +19,8 @@ import BookingsPage from '../features/passenger/BookingsPage'
 import BookingDetailPage from '../features/passenger/BookingDetailPage'
 import NotificationsPage from '../features/passenger/NotificationsPage'
 import StaffLayout from '../features/staff/StaffLayout'
+import StaffTripsPage from '../features/staff/TripsPage'
+import StaffTripDetailPage from '../features/staff/TripDetailPage'
 
 // Heavy screens (QR library, Leaflet map, socket client, camera scanner) load on demand.
 const TicketPage = lazy(() => import('../features/passenger/TicketPage'))
@@ -63,7 +65,9 @@ export default function AppRoutes() {
         </Route>
         <Route element={<ProtectedRoute roles={['staff']} />}>
           <Route path="staff" element={<StaffLayout />}>
-            <Route index element={page(<VerifyTicketPage />)} />
+            <Route index element={<StaffTripsPage />} />
+            <Route path="trips/:id" element={<StaffTripDetailPage />} />
+            <Route path="verify" element={page(<VerifyTicketPage />)} />
           </Route>
         </Route>
         <Route element={<ProtectedRoute roles={['admin']} />}>

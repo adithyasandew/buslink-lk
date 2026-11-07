@@ -12,9 +12,9 @@ import { SelectField, TextField } from '../../components/ui/Field'
 import PageHeader from '../../components/ui/PageHeader'
 import { EmptyState, ErrorState, Loading } from '../../components/ui/States'
 import { validateSchedule } from './validators'
+import { todayIso as today } from '../../lib/format'
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const today = () => new Date().toISOString().slice(0, 10)
 
 function ScheduleForm({ buses, routes, onCreated, onCancel }) {
   const [form, setForm] = useState({ busId: '', routeId: '', departureTime: '', arrivalTime: '', operatingDays: [] })

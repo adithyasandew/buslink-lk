@@ -6,7 +6,14 @@ export const tripDate = (d) =>
 export const dateTime = (d) =>
   new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 
-export const todayIso = () => new Date().toISOString().slice(0, 10)
+/**
+ * Today's date (YYYY-MM-DD) in the user's local calendar. Using toISOString() here would give the UTC date,
+ * which in Sri Lanka (UTC+5:30) is still "yesterday" between midnight and 05:30.
+ */
+export const todayIso = (now = new Date()) => {
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
 
 /** Badge tones for every status shown in the passenger and staff areas (text is always shown too). */
 export const STATUS_TONE = {
