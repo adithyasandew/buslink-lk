@@ -10,7 +10,7 @@ import scheduleRoutes from './routes/schedules.js';
 import tripRoutes, { staffTripsRouter } from './routes/trips.js';
 import bookingRoutes from './routes/bookings.js';
 import ticketRoutes from './routes/tickets.js';
-import { paymentRouter, ownerRevenueRouter } from './routes/payments.js';
+import { paymentRouter, ownerRevenueRouter, mockGatewayRouter } from './routes/payments.js';
 import { tripTrackingRouter, pickupRouter, notificationRouter } from './routes/tracking.js';
 
 export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
@@ -32,6 +32,7 @@ export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
   app.use('/api/v1/trips', tripRoutes);
   app.use('/api/v1/bookings', pickupRouter);
   app.use('/api/v1/notifications', notificationRouter);
+  app.use('/api/v1/payments/mock-gateway', mockGatewayRouter);
   app.use('/api/v1/payments', paymentRouter);
   app.use('/api/v1/owner', ownerRevenueRouter);
   app.use('/api/v1/bookings', bookingRoutes);
