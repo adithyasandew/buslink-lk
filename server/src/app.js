@@ -7,6 +7,9 @@ import authRoutes from './routes/auth.js';
 import { busRouter, staffRouter } from './routes/buses.js';
 import routeRoutes from './routes/routes.js';
 import scheduleRoutes from './routes/schedules.js';
+import tripRoutes, { staffTripsRouter } from './routes/trips.js';
+import bookingRoutes from './routes/bookings.js';
+import ticketRoutes from './routes/tickets.js';
 
 export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
   const app = express();
@@ -21,7 +24,11 @@ export function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
 
   app.use('/api/v1/auth', authRoutes);
   app.use('/api/v1/buses', busRouter);
+  app.use('/api/v1/staff', staffTripsRouter);
   app.use('/api/v1/staff', staffRouter);
+  app.use('/api/v1/trips', tripRoutes);
+  app.use('/api/v1/bookings', bookingRoutes);
+  app.use('/api/v1/tickets', ticketRoutes);
   app.use('/api/v1/routes', routeRoutes);
   app.use('/api/v1/schedules', scheduleRoutes);
 

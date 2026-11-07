@@ -7,6 +7,7 @@ export const validate = (schema, source = 'body') => (req, _res, next) => {
     const details = result.error.issues.map((i) => ({ field: i.path.join('.'), message: i.message }));
     return next(new AppError(400, 'VALIDATION_ERROR', 'Invalid input', details));
   }
-  req[source] = result.data;
+  // req.query is a read-only getter in Express 5, so redefine it instead of assigning.
+  Object.defineProperty(req, source, { value: result.data, writable: true, configurable: true, enumerable: true });
   next();
 };

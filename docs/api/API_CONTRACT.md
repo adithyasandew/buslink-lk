@@ -65,4 +65,7 @@ Owner column: **PM** = `adithyasandew` (bus/schedule and booking/ticket backends
 | PATCH | /notifications/:id/read | any (own) | Mark read |
 | GET | /health | public | Health check |
 
+### Booking lifecycle (implemented)
+`POST /bookings` creates a `pending` booking and holds the seats (unique `(tripId, seatNumber)` reservation; conflicts return 409 `BOOKING_SEAT_TAKEN` with nothing held). The fare is computed on the server. A booking becomes `confirmed` and its ticket is issued by the server-side `confirmBooking` step, which the payment flow (Module 4) calls after a successful payment. Cancelling frees the seats and cancels the ticket. `POST /tickets/verify` atomically marks a valid ticket `used` (replays return 409 `TICKET_ALREADY_USED`; staff not assigned to the trip get 403).
+
 Each endpoint's request/response schemas are added here by its owner in the same PR that implements it.
