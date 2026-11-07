@@ -23,7 +23,8 @@ Owner column: **PM** = `adithyasandew` (bus/schedule and booking/ticket backends
 | POST/GET | /buses | owner | Register, list own buses |
 | GET/PATCH/DELETE | /buses/:id | owner (own) | Bus detail, update, deactivate |
 | POST/GET | /staff | owner | Create staff user, list own staff |
-| POST/DELETE | /buses/:id/staff | owner (own) | Assign / unassign staff |
+| POST | /buses/:id/staff | owner (own) | Assign staff `{ staffUserId, staffType }` |
+| DELETE | /buses/:id/staff/:staffUserId | owner (own) | Unassign staff |
 | POST/GET | /routes | owner | Create, list own routes |
 | GET/PATCH/DELETE | /routes/:id | owner (own) | Route detail, update, delete |
 | PUT | /routes/:id/stops | owner (own) | Replace ordered stop list |

@@ -13,7 +13,7 @@ Shared models and schema changes are owned by `adithyasandew` (see TEAM_RESPONSI
 
 | Collection | Key fields | Indexes / constraints |
 |---|---|---|
-| `users` | name, email, passwordHash, role (`passenger`\|`owner`\|`staff`\|`admin`), phone, status (`active`\|`suspended`\|`pending`), ownerVerified (owners) | unique `email` |
+| `users` | name, email, passwordHash, role (`passenger`\|`owner`\|`staff`\|`admin`), phone, status (`active`\|`suspended`\|`pending`), ownerVerified (owners), ownerId (staff: creating owner) | unique `email` |
 | `buses` | ownerId→users, registrationNumber, model, capacity, seatLayout, status (`pending`\|`verified`\|`active`\|`inactive`) | unique `registrationNumber` (proposed); index `ownerId` |
 | `busstaffassignments` | staffUserId→users, busId→buses, staffType (`driver`\|`conductor`), status | index `busId`, `staffUserId` |
 | `routes` | ownerId, name, startPoint, destination, assignedBusIds[] | index `ownerId` |
