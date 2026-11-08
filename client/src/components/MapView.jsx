@@ -3,39 +3,56 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 /**
- * Leaflet + OpenStreetMap map of a route with the live bus position.
+ * Leaflet + OpenStreetMap map displaying route stops.
  * Decorative for assistive tech: the page always provides the same information as text.
+ * Map click handler is provided via onMapClick prop when needed.
  */
-export default function MapView({ stops, bus, pickup }) {
+export default function MapView({ stops, onMapClick }) {
   const el = useRef(null)
-  const map = useRef(null)
-  const busMarker = useRef(null)
+  const mapRef = useRef(null)
 
   useEffect(() => {
+    // Remove existing map if present to allow re-initialization
+    if (mapRef.current?.leafletMap) {
+      mapRef.current.leafletMap.remove()
+      mapRef.current = null
+    }
+    // Only initialize if element is in DOM
+    if (!el.current || !el.current.parentNode) return
     const m = L.map(el.current, { scrollWheelZoom: false })
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; OpenStreetMap contributors',
     }).addTo(m)
+    mapRef.current = { leafletMap: m }
+
+    // Draw route polyline through stops
     const points = stops.map((s) => [s.location.lat, s.location.lng])
-    L.polyline(points, { color: '#4338ca', weight: 4, opacity: 0.7 }).addTo(m)
-    stops.forEach((s) => L.circleMarker([s.location.lat, s.location.lng], { radius: 6, color: '#4338ca', fillColor: '#fff', fillOpacity: 1, weight: 2 }).bindTooltip(s.name).addTo(m))
-    if (pickup) L.circleMarker([pickup.lat, pickup.lng], { radius: 9, color: '#15803d', fillColor: '#dcfce7', fillOpacity: 1, weight: 3 }).bindTooltip('Your pickup').addTo(m)
-    m.fitBounds(points, { padding: [24, 24] })
-    map.current = m
-    return () => { m.remove(); map.current = null; busMarker.current = null }
-  }, [stops, pickup])
-
-  useEffect(() => {
-    if (!map.current || !bus) return
-    const ll = [bus.lat, bus.lng]
-    if (!busMarker.current) {
-      const icon = L.divIcon({ className: '', html: '<div style="width:22px;height:22px;border-radius:9999px;background:#4338ca;border:3px solid #fff;box-shadow:0 0 0 4px rgba(67,56,202,.25)"></div>', iconSize: [22, 22], iconAnchor: [11, 11] })
-      busMarker.current = L.marker(ll, { icon, title: 'Bus' }).addTo(map.current)
-    } else {
-      busMarker.current.setLatLng(ll)
+    if (points.length >= 2) {
+      L.polyline(points, { color: '#4338ca', weight: 4, opacity: 0.7 }).addTo(m)
     }
-    map.current.panTo(ll, { animate: true })
-  }, [bus])
 
-  return <div ref={el} aria-hidden="true" className="h-72 w-full overflow-hidden rounded-2xl border border-border sm:h-96" />
+    // Mark each stop
+    stops.forEach((s, i) => {
+      const lat = s.location.lat, lng = s.location.lng
+      L.circleMarker([lat, lng], {
+        radius: 6,
+        color: '#4338ca',
+        fillColor: '#fff',
+        fillOpacity: 1,
+        weight: 2,
+      }).bindTooltip(`Stop ${i + 1}`).addTo(m)
+    })
+
+    // Map click: place a stop at the clicked location
+    if (onMapClick) {
+      const handleMapClick = (e) => {
+        const { lat, lng } = e.latlng
+        onMapClick({ lat: lat.lng, lng: `${lng}` })
+      }
+      m.on('click', handleMapClick)
+      return () => m.off('click', handleMapClick)
+    }
+  }, [stops, onMapClick])
+
+  return <div ref={el} aria-hidden="true" className="h-80 w-full overflow-hidden rounded-2xl border border-border" />
 }
