@@ -28,9 +28,12 @@ export default function Home() {
         <h1 className="mt-3 max-w-2xl text-[clamp(1.875rem,1.4rem+2.4vw,3rem)] leading-tight">Book, ride and track private buses in one place.</h1>
         <p className="mt-4 max-w-xl text-primary-soft">BusLink LK connects passengers, bus owners and crews so every trip is easier to plan and more predictable.</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link to={user ? homeFor(user) : '/login'} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-6 font-semibold text-primary hover:bg-primary-soft">
-            {user ? 'Go to dashboard' : 'Log in'}
+          <Link to={user ? homeFor(user) : '/register'} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-6 font-semibold text-primary hover:bg-primary-soft">
+            {user ? 'Go to dashboard' : 'Create an account'}
           </Link>
+          {!user && (
+            <Link to="/login" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/40 px-6 font-semibold text-white hover:bg-white/10">Log in</Link>
+          )}
         </div>
       </section>
 

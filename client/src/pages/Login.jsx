@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../app/AuthContext'
 import { homeFor } from '../app/roles'
 import Button from '../components/ui/Button'
@@ -45,6 +45,9 @@ export default function Login() {
           <Button type="submit" disabled={busy} className="w-full">{busy ? 'Logging in…' : 'Log in'}</Button>
         </form>
       </Card>
+      <p className="mt-4 text-center text-sm text-muted">
+        New to BusLink LK? <Link to="/register" className="inline-flex min-h-11 items-center font-semibold text-primary underline">Create an account</Link>
+      </p>
     </section>
   )
 }

@@ -35,7 +35,10 @@ export default function Layout() {
                 </button>
               </>
             ) : (
-              <Link to="/login" className="inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover">Log in</Link>
+              <>
+                <Link to="/register" className="inline-flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-primary hover:bg-background">Sign up</Link>
+                <Link to="/login" className="inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover">Log in</Link>
+              </>
             )}
           </div>
         </nav>
