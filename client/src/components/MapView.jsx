@@ -3,10 +3,10 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 /**
- * Leaflet + OpenStreetMap map displaying route stops and direction.
+ * Leaflet + OpenStreetMap map displaying route stops.
  * Decorative for assistive tech: the page always provides the same information as text.
  * Map click handler is provided via onMapClick prop when needed.
- * Fixed: proper map height, road-direction styling, and initialization.
+ * Fixed: aria-hidden removal, proper map initialization, and height.
  */
 export default function MapView({ stops, onMapClick }) {
   const el = useRef(null)
@@ -41,8 +41,7 @@ export default function MapView({ stops, onMapClick }) {
         maxZoom: 19, attribution: '&copy; OpenStreetMap contributors',
       }).addTo(m)
 
-      // THEN set view and zoom - this was the missing step
-      // Center on the first stop with appropriate zoom
+      // THEN set view and zoom - this is the critical step that prevents "Set map center and zoom first" error
       if (stops && stops.length > 0) {
         const firstStop = stops[0]
         const centerLat = firstStop.location.lat
@@ -56,45 +55,22 @@ export default function MapView({ stops, onMapClick }) {
       mapRef.current = { leafletMap: m }
       setIsReady(true)
 
-      // Draw main route polyline - thicker, road-like style
-      // Main route: thick blue line emphasizing the route
+      // Draw route polyline through stops
       const points = stops.map((s) => [s.location.lat, s.location.lng])
       if (points.length >= 2) {
-        // Main route polyline - emphasized road
-        L.polyline(points, {
-          color: '#1a73e8', // Google Maps blue
-          weight: 6,        // Thicker line
-          opacity: 0.9,
-          // No dashArray - solid line like a main road
-        }).addTo(m)
-      }
-
-      // Add direction markers along the route to show direction
-      // Small orange markers at intervals to indicate direction of travel
-      if (stops && stops.length >= 2) {
-        const interval = Math.max(1, Math.floor(stops.length / 4))
-        for (let i = 0; i < stops.length; i += interval) {
-          const stop = stops[i]
-          L.circleMarker([stop.location.lat, stop.location.lng], {
-            radius: 6,
-            color: '#ff8c00', // Orange direction color
-            fillColor: '#ff8c00',
-            fillOpacity: 1,
-            weight: 2,
-          }).bindTooltip(`Direction ${i + 1}`).addTo(m)
-        }
+        L.polyline(points, { color: '#4338ca', weight: 4, opacity: 0.7 }).addTo(m)
       }
 
       // Mark each stop
       stops.forEach((s, i) => {
         const lat = s.location.lat, lng = s.location.lng
         L.circleMarker([lat, lng], {
-          radius: 5,
-          color: '#1a73e8',
+          radius: 6,
+          color: '#4338ca',
           fillColor: '#fff',
           fillOpacity: 1,
           weight: 2,
-        }).bindTooltip(`Stop ${i + 1} `).addTo(m)
+        }).bindTooltip(`Stop ${i + 1}`).addTo(m)
       })
 
       // Map click: place a stop at the clicked location
@@ -123,19 +99,12 @@ export default function MapView({ stops, onMapClick }) {
     }
   }, [])
 
-  // Ensure container has proper minimum height - this effect runs after render
+  // Ensure container has proper minimum height
   useEffect(() => {
     const container = el.current?.parentElement
     if (container) {
-      // Set min-height based on available space, but don't override explicit heights
       const rect = el.current.getBoundingClientRect()
-      if (rect.height > 0) {
-        container.style.minHeight = `${rect.height}px`
-      } else {
-        // Fallback minimum height
-        container.style.minHeight = '120px'
-      }
-      // Don't set fixed height - let it flow naturally
+      container.style.minHeight = rect.height > 0 ? `${rect.height}px` : '120px'
       container.style.height = 'auto'
     }
   }, [el.current])
@@ -144,8 +113,8 @@ export default function MapView({ stops, onMapClick }) {
     <div
       ref={el}
       aria-hidden="false"
-      className="rounded-xl border border-border overflow-hidden"
-      style={{ width: '100%' }}
+      className="rounded-2xl border border-border overflow-hidden"
+      style={{ minHeight: '120px', width: '100%' }}
     />
   )
 }
