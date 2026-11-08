@@ -17,8 +17,6 @@ export default function MapView({ stops, onMapClick }) {
       mapRef.current.leafletMap.remove()
       mapRef.current = null
     }
-    // Only initialize if element is in DOM
-    if (!el.current || !el.current.parentNode) return
     const m = L.map(el.current, { scrollWheelZoom: false })
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; OpenStreetMap contributors',

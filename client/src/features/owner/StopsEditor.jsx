@@ -105,6 +105,13 @@ export default function StopsEditor({ initialStops, onSave }) {
     return () => m.off('click', handleMapClick)
   }, [])
 
+  const handleMap = (pos) => {
+    setSelectedStop({ rowIdx: null, lat: pos.lat, lng: pos.lng })
+    if (rows.length < 2) {
+      setRows([{ ...blank(), lat: pos.lat, lng: pos.lng }])
+    }
+  }
+
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted">
@@ -120,7 +127,7 @@ export default function StopsEditor({ initialStops, onSave }) {
             name: r.name,
             location: { lat: Number(r.lat), lng: Number(r.lng) },
           }))}
-          onMapClick={rows.length < 2 ? undefined : null}
+          onMapClick={handleMap}
         />
       </div>
 
