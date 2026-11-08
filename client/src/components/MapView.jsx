@@ -93,7 +93,8 @@ export default function MapView({ stops, onMapClick, onFocusStop }) {
   }, [el.current])
 
   // Calculate and draw routes between consecutive stops using OSRM
-  const calculateRoutes = () => {
+  useEffect(() => {
+    // Only calculate if we have a map and enough stops
     if (!mapRef.current || stops.length < 2) {
       setIsRouting(false)
       return
@@ -149,8 +150,8 @@ export default function MapView({ stops, onMapClick, onFocusStop }) {
         }
       }
 
-      // Draw each route on the map
-      if (routes && routes.length > 0) {
+      // Draw each route on the map - check mapRef.current exists
+      if (routes && routes.length > 0 && mapRef.current?.leafletMap) {
         routes.forEach((route, routeIndex) => {
           const latlngs = route.coordinates.map((coord) => [
             coord[1], // latitude
@@ -181,7 +182,7 @@ export default function MapView({ stops, onMapClick, onFocusStop }) {
 
       setIsRouting(false)
     })()
-  }
+  }, [stops, mapRef])
 
   useEffect(() => {
     // Handle focus stop - center map on specific stop
