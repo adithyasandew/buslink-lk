@@ -43,6 +43,21 @@ export default function StopsEditor({ initialStops, onSave }) {
     }
   }
 
+  // Handle focus stop - center map on specific stop and auto-fill coordinates
+  const handleFocusStop = (rowIdx, lat, lng) => {
+    setSelectedStop({ rowIdx, lat, lng })
+    // Center the map on the selected stop
+    if (mapRef.current?.current) {
+      const m = mapRef.current.current.leafletMap
+      if (m) {
+        m.setView([lat, lng], 14)
+      }
+    }
+    // Auto-fill the lat/lng for this stop row
+    edit(rowIdx, 'lat', String(lat))
+    edit(rowIdx, 'lng', String(lng))
+  }
+
   useEffect(() => {
     // Initialize Leaflet map after mount
     if (!mapRef.current) return
@@ -128,18 +143,23 @@ export default function StopsEditor({ initialStops, onSave }) {
             location: { lat: Number(r.lat), lng: Number(r.lng) },
           }))}
           onMapClick={handleMap}
+          onFocusStop={handleFocusStop}
         />
       </div>
 
       <ol className="space-y-3">
         {rows.map((r, i) => (
-          <li key={i} className="rounded-xl border border-border bg-background p-3" aria-label={`Stop ${i + 1}`}>
+          <li key={i} className="rounded-xl border border-background bg-background p-3" aria-label={`Stop ${i + 1}`}>
             <div className="mb-3 flex items-center justify-between">
               <span className="font-semibold">Stop {i + 1}</span>
               <div className="flex gap-1">
                 <Button variant="secondary" className="px-3" aria-label={`Move stop ${i + 1} up`} disabled={i === 0} onClick={() => move(i, -1)}>↑</Button>
                 <Button variant="secondary" className="px-3" aria-label={`Move stop ${i + 1} down`} disabled={i === rows.length - 1} onClick={() => move(i, 1)}>↓</Button>
                 <Button variant="secondary" aria-label={`Remove stop ${i + 1}`} disabled={rows.length <= 2} onClick={() => setRows(rows.filter((_, idx) => idx !== i))}>Remove</Button>
+                {/* Mark Location button - centers map on stop and auto-fills coordinates */}
+                <Button variant="secondary" className="px-3" aria-label={`Mark location for stop ${i + 1}`} onClick={() => handleFocusStop(i, Number(r.lat), Number(r.lng))}>
+                  Mark
+                </Button>
               </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-4">
@@ -164,7 +184,7 @@ export default function StopsEditor({ initialStops, onSave }) {
                 error={errors[i]?.lng}
               />
               <TextField
-                label="Fare from start (Rs.)"
+                label="Fare From Start"
                 inputMode="decimal"
                 value={r.fareFromStart}
                 onChange={(e) => edit(i, 'fareFromStart', e.target.value)}
@@ -174,14 +194,6 @@ export default function StopsEditor({ initialStops, onSave }) {
           </li>
         ))}
       </ol>
-
-      {errors._form && <Alert tone="danger">{errors._form}</Alert>}
-      {msg && <Alert tone={msg.tone}>{msg.text}</Alert>}
-
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Button variant="secondary" disabled={rows.length >= 60} onClick={() => setRows([...rows, blank()])}>Add stop</Button>
-        <Button disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save stops'}</Button>
-      </div>
     </div>
   )
 }
