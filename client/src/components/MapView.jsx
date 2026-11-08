@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css'
  * Leaflet + OpenStreetMap map displaying route stops and direction.
  * Decorative for assistive tech: the page always provides the same information as text.
  * Map click handler is provided via onMapClick prop when needed.
- * Fixed: proper map initialization, height, and road-direction styling.
+ * Fixed: proper map height, road-direction styling, and initialization.
  */
 export default function MapView({ stops, onMapClick }) {
   const el = useRef(null)
@@ -26,26 +26,28 @@ export default function MapView({ stops, onMapClick }) {
       if (!el.current || !el.current.parentNode) return
 
       const rect = el.current.getBoundingClientRect()
+      // Element must have non-zero dimensions to initialize Leaflet
       if (rect.width <= 0 || rect.height <= 0) {
         // Element not visible yet, wait and try again
-        setTimeout(initializeMap, 100)
+        setTimeout(initializeMap, 50)
         return
       }
 
       // Initialize Leaflet map
       const m = L.map(el.current, { scrollWheelZoom: false })
 
-      // Add tile layer FIRST
+      // Add tile layer FIRST (critical - must be before setView)
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19, attribution: '&copy; OpenStreetMap contributors',
       }).addTo(m)
 
-      // THEN set view and zoom - critical for map to display
+      // THEN set view and zoom - this was the missing step
+      // Center on the first stop with appropriate zoom
       if (stops && stops.length > 0) {
         const firstStop = stops[0]
         const centerLat = firstStop.location.lat
         const centerLng = firstStop.location.lng
-        m.setView([centerLat, centerLng], 13)
+        m.setView([centerLat, centerLng], 14)
       } else {
         // Default center for Sri Lanka
         m.setView([9.0, 80.0], 7)
@@ -54,39 +56,32 @@ export default function MapView({ stops, onMapClick }) {
       mapRef.current = { leafletMap: m }
       setIsReady(true)
 
-      // Draw route direction with road-like styling
-      // Use a thicker polyline with a color that resembles road directions
+      // Draw main route polyline - thicker, road-like style
+      // Main route: thick blue line emphasizing the route
       const points = stops.map((s) => [s.location.lat, s.location.lng])
       if (points.length >= 2) {
-        // Main route polyline - darker blue, thicker line
+        // Main route polyline - emphasized road
         L.polyline(points, {
-          color: '#2c3e50',
-          weight: 6,
-          opacity: 0.8,
-          // Use gradient simuation by adding multiple layers
+          color: '#1a73e8', // Google Maps blue
+          weight: 6,        // Thicker line
+          opacity: 0.9,
+          // No dashArray - solid line like a main road
         }).addTo(m)
+      }
 
-        // Add additional visual layers to simulate road direction
-        // Add a slightly lighter polyline alongside to suggest direction
-        if (points.length >= 2) {
-          const first = points[0]
-          const last = points[points.length - 1]
-          const dx = last.lng - first.lng
-          const dy = last.lat - first.lat
-          const length = Math.max(1, Math.sqrt(dx * dx + dy * dy))
-
-          // Add direction arrows using circle markers at intervals
-          const interval = Math.max(1, Math.floor(points.length / 4))
-          for (let i = 0; i < points.length; i += interval) {
-            const point = points[i]
-            L.circleMarker([point[0], point[1]], {
-              radius: 8,
-              color: '#e67e22', // Orange color for direction
-              fillColor: '#e67e22',
-              fillOpacity: 0.8,
-              weight: 3,
-            }).bindTooltip(`Direction ${i + 1}`).addTo(m)
-          }
+      // Add direction markers along the route to show direction
+      // Small orange markers at intervals to indicate direction of travel
+      if (stops && stops.length >= 2) {
+        const interval = Math.max(1, Math.floor(stops.length / 4))
+        for (let i = 0; i < stops.length; i += interval) {
+          const stop = stops[i]
+          L.circleMarker([stop.location.lat, stop.location.lng], {
+            radius: 6,
+            color: '#ff8c00', // Orange direction color
+            fillColor: '#ff8c00',
+            fillOpacity: 1,
+            weight: 2,
+          }).bindTooltip(`Direction ${i + 1}`).addTo(m)
         }
       }
 
@@ -94,12 +89,12 @@ export default function MapView({ stops, onMapClick }) {
       stops.forEach((s, i) => {
         const lat = s.location.lat, lng = s.location.lng
         L.circleMarker([lat, lng], {
-          radius: 6,
-          color: '#2c3e50',
-          fillColor: '#e74c3c',
+          radius: 5,
+          color: '#1a73e8',
+          fillColor: '#fff',
           fillOpacity: 1,
           weight: 2,
-        }).bindTooltip(`Stop ${i + 1}`).addTo(m)
+        }).bindTooltip(`Stop ${i + 1} `).addTo(m)
       })
 
       // Map click: place a stop at the clicked location
@@ -113,8 +108,8 @@ export default function MapView({ stops, onMapClick }) {
       }
     }
 
-    // Initial check
-    initializeMap()
+    // Initial check - wait one tick for DOM
+    setTimeout(initializeMap, 100)
   }, [stops, onMapClick])
 
   // Cleanup on unmount
@@ -128,12 +123,19 @@ export default function MapView({ stops, onMapClick }) {
     }
   }, [])
 
-  // Ensure container has proper minimum height
+  // Ensure container has proper minimum height - this effect runs after render
   useEffect(() => {
     const container = el.current?.parentElement
     if (container) {
+      // Set min-height based on available space, but don't override explicit heights
       const rect = el.current.getBoundingClientRect()
-      container.style.minHeight = rect.height > 0 ? `${rect.height}px` : '120px'
+      if (rect.height > 0) {
+        container.style.minHeight = `${rect.height}px`
+      } else {
+        // Fallback minimum height
+        container.style.minHeight = '120px'
+      }
+      // Don't set fixed height - let it flow naturally
       container.style.height = 'auto'
     }
   }, [el.current])
@@ -142,8 +144,8 @@ export default function MapView({ stops, onMapClick }) {
     <div
       ref={el}
       aria-hidden="false"
-      className="rounded-2xl border border-blue-500 overflow-hidden"
-      style={{ minHeight: '120px', width: '100%' }}
+      className="rounded-xl border border-border overflow-hidden"
+      style={{ width: '100%' }}
     />
   )
 }
