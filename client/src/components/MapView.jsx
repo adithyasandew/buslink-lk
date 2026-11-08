@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css'
  * Map click handler is provided via onMapClick prop when needed.
  * Integrated OSRM routing for actual road-based route visualization.
  */
-export default function MapView({ stops, onMapClick }) {
+export default function MapView({ stops, onMapClick, onFocusStop }) {
   const el = useRef(null)
   const mapRef = useRef(null)
   const [isReady, setIsReady] = useState(false)
@@ -37,27 +37,29 @@ export default function MapView({ stops, onMapClick }) {
         return
       }
 
-      // Initialize Leaflet map
-      const m = L.map(el.current, { scrollWheelZoom: false })
+      // Initialize Leaflet map ONLY if not already initialized
+      if (!mapRef.current?.leafletMap) {
+        const m = L.map(el.current, { scrollWheelZoom: false })
 
-      // Add tile layer FIRST (critical - must be before setView)
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19, attribution: '&copy; OpenStreetMap contributors',
-      }).addTo(m)
+        // Add tile layer FIRST (critical - must be before setView)
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19, attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(m)
 
-      // THEN set view and zoom - this is the critical step that prevents "Set map center and zoom first" error
-      if (stops && stops.length > 0) {
-        const firstStop = stops[0]
-        const centerLat = firstStop.location.lat
-        const centerLng = firstStop.location.lng
-        m.setView([centerLat, centerLng], 14)
-      } else {
-        // Default center for Sri Lanka
-        m.setView([9.0, 80.0], 7)
+        // THEN set view and zoom - this is the critical step that prevents "Set map center and zoom first" error
+        if (stops && stops.length > 0) {
+          const firstStop = stops[0]
+          const centerLat = firstStop.location.lat
+          const centerLng = firstStop.location.lng
+          m.setView([centerLat, centerLng], 14)
+        } else {
+          // Default center for Sri Lanka
+          m.setView([9.0, 80.0], 7)
+        }
+
+        mapRef.current = { leafletMap: m }
+        setIsReady(true)
       }
-
-      mapRef.current = { leafletMap: m }
-      setIsReady(true)
 
       // Calculate and draw routes between consecutive stops
       calculateRoutes()
@@ -91,7 +93,7 @@ export default function MapView({ stops, onMapClick }) {
   }, [el.current])
 
   // Calculate and draw routes between consecutive stops using OSRM
-  useEffect(() => {
+  const calculateRoutes = () => {
     if (!mapRef.current || stops.length < 2) {
       setIsRouting(false)
       return
@@ -179,7 +181,21 @@ export default function MapView({ stops, onMapClick }) {
 
       setIsRouting(false)
     })()
-  }, [stops, mapRef])
+  }
+
+  useEffect(() => {
+    // Handle focus stop - center map on specific stop
+    if (!isReady || !mapRef.current || !onFocusStop) return
+
+    const map = mapRef.current.leafletMap
+
+    // Center on first stop by default when map is ready
+    if (stops && stops.length > 0) {
+      const firstStop = stops[0]
+      map.setView([firstStop.location.lat, firstStop.location.lng], 14)
+      onFocusStop(firstStop.location.lat, firstStop.location.lng)
+    }
+  }, [isReady, stops, onFocusStop])
 
   useEffect(() => {
     // Only run once after map is ready
