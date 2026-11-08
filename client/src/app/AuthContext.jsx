@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { getMe, login as apiLogin, tokenStore } from '../api/client'
+import { getMe, login as apiLogin, register as apiRegister, tokenStore } from '../api/client'
 
 const AuthContext = createContext(null)
 
@@ -22,12 +22,20 @@ export function AuthProvider({ children }) {
     return u
   }, [])
 
+  // Registration returns a token too, so a new account is signed in straight away.
+  const register = useCallback(async (details) => {
+    const { token, user: u } = await apiRegister(details)
+    tokenStore.set(token)
+    setUser(u)
+    return u
+  }, [])
+
   const logout = useCallback(() => {
     tokenStore.clear()
     setUser(null)
   }, [])
 
-  const value = useMemo(() => ({ user, loading, login, logout }), [user, loading, login, logout])
+  const value = useMemo(() => ({ user, loading, login, register, logout }), [user, loading, login, register, logout])
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

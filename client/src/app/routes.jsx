@@ -5,6 +5,7 @@ import Layout from '../components/Layout'
 import ProtectedRoute from '../components/ProtectedRoute'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
+import Register from '../pages/Register'
 import { Forbidden, NotFoundPage } from '../pages/Placeholders'
 import AdminLayout from '../features/admin/AdminLayout'
 import AdminOverview from '../features/admin/Overview'
@@ -41,6 +42,7 @@ export default function AppRoutes() {
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
         <Route path="forbidden" element={<Forbidden />} />
         <Route element={<ProtectedRoute roles={['passenger']} />}>
           <Route path="passenger" element={<PassengerLayout />}>

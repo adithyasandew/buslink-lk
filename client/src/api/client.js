@@ -34,6 +34,7 @@ api.interceptors.response.use(
 
 export const getHealth = () => api.get('/health').then((res) => res.data)
 export const login = (body) => api.post('/auth/login', body).then((res) => res.data.data)
+export const register = (body) => api.post('/auth/register', body).then((res) => res.data.data)
 export const getMe = () => api.get('/auth/me').then((res) => res.data.data)
 
 export default api
